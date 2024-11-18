@@ -1,6 +1,16 @@
 import { useState } from 'react'
 const Title = (props)=>{ return(<h1>{props.title}</h1>)}
 const Total = (props)=>{ return(<p>{props.name} {props.number}</p>) }
+const Statistics = (props)=>{ 
+  return(<div>
+    <Total name="good" number={props.good}/>
+    <Total name="neutral" number={props.neutral}/>
+    <Total name="bad" number={props.bad}/>
+    <Total name="all" number={props.all}/>
+    <Total name="average" number={(props.good*1+props.bad*-1)/props.all} />
+    <Total name="positive" number={(props.good/props.all)*100+"%"} />
+  </div>)
+ }
 const App = () => {
   // save clicks of each button to its own state
   const [good, setGood] = useState(0)
@@ -32,12 +42,7 @@ const App = () => {
       <button onClick={handleNeutral}>neutral</button>
       <button onClick={handleBad}>bad</button>
       <Title title={titles.second} />
-      <Total name="good" number={good}/>
-      <Total name="neutral" number={neutral}/>
-      <Total name="bad" number={bad}/>
-      <Total name="all" number={all}/>
-      <Total name="average" number={(good*1+bad*-1)/all} />
-      <Total name="positive" number={(good/all)*100+"%"} />
+      <Statistics good={good} neutral={neutral} bad={bad} all={all}/>
     </div>
   )
 }
