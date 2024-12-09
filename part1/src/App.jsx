@@ -1,14 +1,16 @@
 import { useState } from 'react'
 const Title = (props)=>{ return(<h1>{props.title}</h1>)}
-const StatisticLine = (props)=>{ return(<p>{props.name} {props.value}</p>) }
+const StatisticLine = (props)=>{ return(<><td>{props.name}</td> <td>{props.value}</td></>) }
 const Statistics = (props)=>{ 
   return(<div>
-    <StatisticLine name="good" value={props.good}/>
-    <StatisticLine name="neutral" value={props.neutral}/>
-    <StatisticLine name="bad" value={props.bad}/>
-    <StatisticLine name="all" value={props.all}/>
-    <StatisticLine name="average" value={(props.good*1+props.bad*-1)/props.all} />
-    <StatisticLine name="positive" value={(props.good/props.all)*100+"%"} />
+    <table>
+      <tr><StatisticLine name="good" value={props.good}/></tr>
+      <tr><StatisticLine name="neutral" value={props.neutral}/></tr>
+      <tr><StatisticLine name="bad" value={props.bad}/></tr>
+      <tr><StatisticLine name="all" value={props.all}/></tr>
+      <tr><StatisticLine name="average" value={(props.good*1+props.bad*-1)/props.all} /></tr>
+      <tr><StatisticLine name="positive" value={(props.good/props.all)*100+"%"} /></tr>
+    </table>
   </div>)
 }
 const Feedback = (props)=>{
