@@ -11,13 +11,11 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
   const [selected, setSelected] = useState(0)
-  const [points, setPoint] = useState([0,0,0,0,0,0,0,0])
-  const change = () => {  
-      let x = Math.floor(Math.random()*8);
-      console.log(x)
-      setSelected(x) 
-    }
-  const votes = () => {
+  const [points, setPoint] = useState(new Array(anecdotes.length).fill(0))
+  const changeAnectode = () => {  
+    setSelected(Math.floor(Math.random() * anecdotes.length));
+  }
+  const addVote = () => {
     const newPoints = [...points]
     newPoints[selected] += 1
     setPoint(newPoints)
@@ -27,8 +25,8 @@ const App = () => {
       <h1>Anectode of the day</h1>
       <p>{anecdotes[selected]}</p>
       <p>has {points[selected]} votes</p>
-      <button onClick={votes}>vote</button>
-      <button onClick={change}>next anecdote</button>
+      <button onClick={addVote}>vote</button>
+      <button onClick={changeAnectode}>next anecdote</button>
       <h1>Anectode with the most votes</h1>
       <p>{anecdotes[points.indexOf(Math.max(...points))]}</p>
       <p>has {points[points.indexOf(Math.max(...points))]} votes</p>
