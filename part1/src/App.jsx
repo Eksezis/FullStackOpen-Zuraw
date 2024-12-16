@@ -1,4 +1,11 @@
 import { useState } from 'react'
+const Title = (props)=>{return(<h1>{props.title}</h1>)}
+const Line = (props)=>{return(<p>{props.line}</p>)}
+const VoteLine = (props)=>{return(<p>has {props.line} votes</p>)}
+const Buttons = (props)=>{return(<p>
+<button onClick={props.voting}>vote</button>
+<button onClick={props.changing}>next anecdote</button>
+</p>)}
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -22,14 +29,13 @@ const App = () => {
   }
   return (
     <div>
-      <h1>Anectode of the day</h1>
-      <p>{anecdotes[selected]}</p>
-      <p>has {points[selected]} votes</p>
-      <button onClick={addVote}>vote</button>
-      <button onClick={changeAnectode}>next anecdote</button>
-      <h1>Anectode with the most votes</h1>
-      <p>{anecdotes[points.indexOf(Math.max(...points))]}</p>
-      <p>has {points[points.indexOf(Math.max(...points))]} votes</p>
+      <Title title="Anectode of the day" />
+      <Line line={anecdotes[selected]} />
+      <VoteLine line={points[selected]} />
+      <Buttons voting={addVote} changing={changeAnectode} />
+      <Title title="Anectode with the most votes"/>
+      <Line line={anecdotes[points.indexOf(Math.max(...points))]} />
+      <VoteLine line={points[points.indexOf(Math.max(...points))]} />
     </div>
   )
 }
