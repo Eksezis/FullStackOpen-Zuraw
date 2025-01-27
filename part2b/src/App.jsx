@@ -1,5 +1,29 @@
 import { useState } from 'react'
 
+const Search = ({ search, onSearchChange }) => (
+  <div>
+    filter shown with: 
+    <input value={search} onChange={onSearchChange} />
+  </div>
+)
+
+const PersonForm = ({ newName, newNumber, onNameChange, onNumberChange, onSubmit }) => (
+  <form onSubmit={onSubmit}>
+    <div>name: <input value={newName} onChange={onNameChange} /></div>
+    <div>number: <input value={newNumber} onChange={onNumberChange} /></div>
+    <div><button type="submit">add</button></div>
+  </form>
+)
+
+const PersonList = ({ filteredPersons }) => (
+  <div>
+    <h2>Numbers</h2>
+    {filteredPersons.map(person => (
+      <p key={person.id}>{person.name} {person.number}</p>
+    ))}
+  </div>
+)
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -21,47 +45,42 @@ const App = () => {
       alert(`${newNumber} is already added to phonebook`)
       return
     }
-    const newPerson = { name: newName, number: newNumber }
+    const newPerson = { name: newName, number: newNumber, id: persons.length + 1 }
     setPersons(persons.concat(newPerson))
     setNewName('')
     setNewNumber('')
   }
 
-  const ChangeName = (event) => {
+  const NameChange = (event) => {
     setNewName(event.target.value)
   }
-  const ChangeNumber = (event) => {
+
+  const NumberChange = (event) => {
     setNewNumber(event.target.value)
   }
 
   const SearchChange = (event) => {
     setSearch(event.target.value)
   }
-  
+
+  // Filter persons based on search input
   const filteredPersons = persons.filter(person =>
     person.name.toLowerCase().includes(search.toLowerCase())
   )
 
-  const personList = filteredPersons.map(person => (
-    <p key={person.id}>{person.name} {person.number}</p>
-  ))
-
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>filter shown with: 
-          <input value={search} onChange={SearchChange} />
-        </div>
-      </form>
+      <Search search={search} onSearchChange={SearchChange} />
       <h2>Add a new</h2>
-      <form onSubmit={SubmitChange}>
-          <div>name: <input value={newName} onChange={ChangeName} /></div>
-          <div>number: <input value={newNumber} onChange={ChangeNumber} /></div>
-          <div><button type="submit">add</button></div>
-      </form>
-      <h2>Numbers</h2>
-        {personList}
+      <PersonForm 
+        newName={newName} 
+        newNumber={newNumber} 
+        onNameChange={NameChange} 
+        onNumberChange={NumberChange} 
+        onSubmit={SubmitChange} 
+      />
+      <PersonList filteredPersons={filteredPersons} />
     </div>
   )
 }
