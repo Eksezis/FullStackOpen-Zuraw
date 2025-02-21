@@ -1,28 +1,7 @@
 import { useState } from 'react'
-
-const Search = ({ search, onSearchChange }) => (
-  <div>
-    filter shown with: 
-    <input value={search} onChange={onSearchChange} />
-  </div>
-)
-
-const PersonForm = ({ newName, newNumber, onNameChange, onNumberChange, onSubmit }) => (
-  <form onSubmit={onSubmit}>
-    <div>name: <input value={newName} onChange={onNameChange} /></div>
-    <div>number: <input value={newNumber} onChange={onNumberChange} /></div>
-    <div><button type="submit">add</button></div>
-  </form>
-)
-
-const PersonList = ({ filteredPersons }) => (
-  <div>
-    <h2>Numbers</h2>
-    {filteredPersons.map(person => (
-      <p key={person.id}>{person.name} {person.number}</p>
-    ))}
-  </div>
-)
+import Search from './components/Search'
+import PersonForm from './components/PersonForm'
+import PersonList from './components/PersonList'
 
 const App = () => {
   const [persons, setPersons] = useState([
