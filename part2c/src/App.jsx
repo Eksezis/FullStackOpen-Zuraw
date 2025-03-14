@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Search from './components/Search'
 import PersonForm from './components/PersonForm'
 import PersonList from './components/PersonList'
+import ServerLogic from './services/ServerLogic'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -10,17 +10,11 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
 
-  //Pobranie z servera danych i wklejenie do persons
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })
-      .catch(error => {
-        console.error('Error fetching data: ', error)
-      })
-  }, [])
+    ServerLogic.getPersonList()
+      .then(data => {setPersons(data);})
+      .catch(error => {console.error('Error fetching data: ', error);});
+  },[]);
 
   const SubmitChange = (event) => {
     event.preventDefault()
@@ -32,18 +26,13 @@ const App = () => {
       alert(`${newNumber} is already added to phonebook`)
       return
     }
-    const newPerson = { name: newName, number: newNumber, id: persons.length + 1 }
-    //Dodanie nowej osoby do servera
-    axios
-       .post('http://localhost:3001/persons', newPerson)
-       .then(response => {
-         setPersons(persons.concat(response.data))
-         setNewName('')
-         setNewNumber('')
-       })
-       .catch(error => {
-         console.error('Error adding new person: ', error)
-       })
+    ServerLogic.submitPerson(newName, newNumber)
+      .then(data => {
+        setPersons(persons.concat(data));
+        setNewName('');
+        setNewNumber('');
+      })
+      .catch(error => {console.error('Error adding new person: ', error);});
   }
 
   const NameChange = (event) => {
