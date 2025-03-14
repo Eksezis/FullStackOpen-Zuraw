@@ -49,8 +49,7 @@ const App = () => {
     if (persons.some(person => person.name === newName)) {
       if(window.confirm(`Replace the number?`)){
         const person = persons.find(p => p.name === newName)
-        const updatedPerson = {...person, number: newNumber}
-        ServerLogic.updateNumber(person.id, newNumber).then(() => {
+        ServerLogic.updateNumber(person.id, newNumber).then((updated) => {
           setPersons(persons.map(p => p.id !== updated.id ? p : updated))
         })
       }
