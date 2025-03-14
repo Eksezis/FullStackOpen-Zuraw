@@ -14,7 +14,8 @@ const App = () => {
     ServerLogic.getPersonList()
       .then(data => {setPersons(data);})
       .catch(error => {console.error('Error fetching data: ', error);});
-  },[]);
+    },[]
+  )
 
   const SubmitChange = (event) => {
     event.preventDefault()
@@ -35,6 +36,14 @@ const App = () => {
       .catch(error => {console.error('Error adding new person: ', error);});
   }
 
+  const Delete = (id) => {
+    if (window.confirm('Are you sure you want to delete this entry?')) {
+      ServerLogic.Delete(id).then(() => {
+        setPersons(prevPersons => prevPersons.filter(person => person.id !== id));
+      });
+    }
+  };
+  
   const NameChange = (event) => {
     setNewName(event.target.value)
   }
@@ -63,7 +72,7 @@ const App = () => {
         onNumberChange={NumberChange} 
         onSubmit={SubmitChange} 
       />
-      <PersonList filteredPersons={filteredPersons} />
+      <PersonList filteredPersons={filteredPersons} Delete={Delete} />
     </div>
   )
 }
