@@ -10,6 +10,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
 
+  //Pobranie z servera danych i wklejenie do persons
   useEffect(() => {
     axios
       .get('http://localhost:3001/persons')
@@ -32,9 +33,17 @@ const App = () => {
       return
     }
     const newPerson = { name: newName, number: newNumber, id: persons.length + 1 }
-    setPersons(persons.concat(newPerson))
-    setNewName('')
-    setNewNumber('')
+    //Dodanie nowej osoby do servera
+    axios
+       .post('http://localhost:3001/persons', newPerson)
+       .then(response => {
+         setPersons(persons.concat(response.data))
+         setNewName('')
+         setNewNumber('')
+       })
+       .catch(error => {
+         console.error('Error adding new person: ', error)
+       })
   }
 
   const NameChange = (event) => {
