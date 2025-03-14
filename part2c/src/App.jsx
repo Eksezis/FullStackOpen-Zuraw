@@ -9,32 +9,49 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
+  const [Message, setMessage] = useState(null)
+  const [MessageStyle, setMessageStyle] = useState('green')
 
   useEffect(() => {
     ServerLogic.getPersonList()
       .then(data => {setPersons(data);})
-      .catch(error => {console.error('Error fetching data: ', error);});
+      .catch(error => {
+        setMessageStyle('red')
+        setMessage(`Failed fetching data: `+error)
+        setTimeout(() => { setErrorMessage(null) }, 5000)
+      });
     },[]
   )
 
   const SubmitChange = (event) => {
     event.preventDefault()
     if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+        setMessageStyle('red')
+        setMessage(`${newName} is already added to phonebook`)
+        setTimeout(() => { setMessage(null) }, 5000)
       updateNumber(newName, newNumber);
       return
     }
     if (persons.some(person => person.number === newNumber)) {
-      alert(`${newNumber} is already added to phonebook`)
+        setMessageStyle('red')
+        setMessage(`${newNumber} is already added to phonebook`)
+        setTimeout(() => { setMessage(null) }, 5000)
       return
     }
     ServerLogic.submitPerson(newName, newNumber)
       .then(data => {
         setPersons(persons.concat(data));
+          setMessageStyle('green')
+          setMessage(`${newName} added successfully`)
+          setTimeout(() => { setMessage(null) }, 5000)
         setNewName('');
         setNewNumber('');
       })
-      .catch(error => {console.error('Error adding new person: ', error);});
+      .catch(error => {
+          setMessageStyle('red')
+          setMessage(`Failed adding person: `+error)
+          setTimeout(() => { setMessage(null) }, 5000)
+      });
   }
 
   const Delete = (id) => {
@@ -51,8 +68,23 @@ const App = () => {
         const person = persons.find(p => p.name === newName)
         ServerLogic.updateNumber(person.id, newNumber).then((updated) => {
           setPersons(persons.map(p => p.id !== updated.id ? p : updated))
+            setMessageStyle('green')
+            setMessage(`${newName}'s number changed successfully`)
+            setTimeout(() => { setMessage(null) }, 5000)
         })
       }
+    }
+  }
+
+  const Notification = ({ message, messageStyle }) => {
+    if (message === null) {
+      return null
+    }
+    if (messageStyle == 'green') {
+      return (<div className='notif'>{message}</div>)
+    }
+    if (messageStyle == 'red') {
+      return (<div className='error'>{message}</div>)
     }
   }
 
@@ -75,6 +107,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={Message} messageStyle={MessageStyle}/>
       <Search search={search} onSearchChange={SearchChange} />
       <h2>Add a new</h2>
       <PersonForm 

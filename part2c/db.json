@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Arto Hellas",
-      "number": "14-314134",
+      "number": "234-13436",
       "id": "1"
     },
     {
@@ -39,6 +39,11 @@
       "id": "8",
       "name": "Filip Chodząco",
       "number": "31-134134"
+    },
+    {
+      "id": "40d5",
+      "name": "Adam Każualowicz",
+      "number": "143-134134"
     }
   ]
 }
