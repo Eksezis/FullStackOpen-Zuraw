@@ -11,4 +11,9 @@ import axios from "axios";
       .then(() => {console.log(`Person with ID ${id} deleted successfully.`);})
       .catch(error => {console.error('Error deleting person:', error);alert('Failed to delete the person');});
   };
-export default { getPersonList, submitPerson, Delete };
+  const updateNumber = (id, newNumber) => {
+    return axios.patch(`http://localhost:3001/persons/${id}`, {number: newNumber})
+      .then(response => {return response.data;})
+      .catch(error => {console.error('Error updating resource:', error);});
+  };
+export default { getPersonList, submitPerson, Delete, updateNumber };

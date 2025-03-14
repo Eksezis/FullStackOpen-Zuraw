@@ -21,6 +21,7 @@ const App = () => {
     event.preventDefault()
     if (persons.some(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`)
+      updateNumber(newName, newNumber);
       return
     }
     if (persons.some(person => person.number === newNumber)) {
@@ -42,8 +43,20 @@ const App = () => {
         setPersons(prevPersons => prevPersons.filter(person => person.id !== id));
       });
     }
-  };
+  }
   
+  const updateNumber = (newName, newNumber) => {
+    if (persons.some(person => person.name === newName)) {
+      if(window.confirm(`Replace the number?`)){
+        const person = persons.find(p => p.name === newName)
+        const updatedPerson = {...person, number: newNumber}
+        ServerLogic.updateNumber(person.id, newNumber).then(() => {
+          setPersons(persons.map(p => p.id !== updated.id ? p : updated))
+        })
+      }
+    }
+  }
+
   const NameChange = (event) => {
     setNewName(event.target.value)
   }
