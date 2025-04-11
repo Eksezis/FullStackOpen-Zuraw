@@ -58,6 +58,9 @@ const App = () => {
     if (window.confirm('Are you sure you want to delete this entry?')) {
       ServerLogic.Delete(id).then(() => {
         setPersons(prevPersons => prevPersons.filter(person => person.id !== id));
+          setMessageStyle('green')
+          setMessage(`Person deleted succesfully`)
+          setTimeout(() => { setMessage(null) }, 5000)
       });
     }
   }
