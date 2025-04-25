@@ -8,8 +8,10 @@ function App() {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [weather, setWeather] = useState(null);
   
+  // Api key from https://openweathermap.org
   const weatherApiKey = '0962c74ed92a5e11cdfe4fbd879f9cde';
 
+  //Fills countries list with ALL countries
   useEffect(() => {
     axios
     .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
@@ -18,22 +20,7 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    if (selectedCountry && selectedCountry.capital && selectedCountry.capital[0]) {
-      const capital = selectedCountry.capital[0];
-  
-      axios
-        .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${weatherApiKey}`)
-        .then((response) => {
-          setWeather(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching weather:", error);
-          setWeather(null); // Optionally handle this error in a more graceful way
-        });
-    }
-  }, [selectedCountry]);
-
+  //sets matching countries to the countries with include inputed text "It works this time <3 ^o^ "
   useEffect(() => {
     if (search === '') {
       setMatchingCountries([]);
@@ -45,12 +32,31 @@ function App() {
     }
   }, [search, countries]);
 
+  //gets weather for the capital of selected country
+  useEffect(() => {
+    if (selectedCountry && selectedCountry.capital && selectedCountry.capital[0]) {
+      const capital = selectedCountry.capital[0];
+  
+      axios
+        .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${weatherApiKey}`)
+        .then((response) => {
+          setWeather(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching weather:", error);
+          setWeather(null);
+        });
+    }
+  }, [selectedCountry]);
+
+  //sets search variable upon input change
   const SearchChange = (event) => {
     const x = event.target.value.trim();
     setSearch(x);
     setSelectedCountry(null);
   };
 
+  //checks with countries it should show and give back a list or sets a single one if its the only one
   const Operation = () => {
     if (matchingCountries.length === 0) { return null; }
     if (matchingCountries.length > 10) { return <p>Too many matches, specify another filter</p>; }
@@ -73,6 +79,7 @@ function App() {
     }
   };
 
+  // gives the information of a selected counry
   const renderCountryInfo = () => {
     if (!selectedCountry) return null;
 
