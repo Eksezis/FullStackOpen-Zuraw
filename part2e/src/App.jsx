@@ -6,7 +6,10 @@ function App() {
   const [search, setSearch] = useState('');
   const [matchingCountries, setMatchingCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [weather, setWeather] = useState(null);
   
+  const weatherApiKey = '0962c74ed92a5e11cdfe4fbd879f9cde';
+
   useEffect(() => {
     axios
     .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
@@ -15,11 +18,21 @@ function App() {
     });
   }, []);
 
-  const SearchChange = (event) => {
-    const x = event.target.value.trim();
-    setSearch(x);
-    setSelectedCountry(null);
-  };
+  useEffect(() => {
+    if (selectedCountry && selectedCountry.capital && selectedCountry.capital[0]) {
+      const capital = selectedCountry.capital[0];
+  
+      axios
+        .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${weatherApiKey}`)
+        .then((response) => {
+          setWeather(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching weather:", error);
+          setWeather(null); // Optionally handle this error in a more graceful way
+        });
+    }
+  }, [selectedCountry]);
 
   useEffect(() => {
     if (search === '') {
@@ -31,6 +44,12 @@ function App() {
       setMatchingCountries(filtered);
     }
   }, [search, countries]);
+
+  const SearchChange = (event) => {
+    const x = event.target.value.trim();
+    setSearch(x);
+    setSelectedCountry(null);
+  };
 
   const Operation = () => {
     if (matchingCountries.length === 0) { return null; }
@@ -64,6 +83,18 @@ function App() {
         <p><strong>Area:</strong> {selectedCountry.area} km²</p>
         <p><strong>Languages:</strong> {Object.values(selectedCountry.languages).join(', ')}</p>
         <img src={selectedCountry.flags.png} alt={selectedCountry.flags.alt} width="100" />
+        {selectedCountry.capital && selectedCountry.capital[0] && weather ? (
+          <div>
+            <p><strong>Temperature:</strong> {weather.main.temp}°F</p>
+            <img
+              src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+              alt={weather.weather[0].description}
+            />
+            <p><strong>Wind:</strong> {weather.wind.speed} m/s</p>
+          </div>
+        ) : (
+          <p>Weather data not available</p>
+        )}
       </div>
     );
   };
