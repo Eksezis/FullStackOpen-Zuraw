@@ -1,9 +1,17 @@
 const http = require('http')
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
 
-var morgan = require('morgan')
-app.use(morgan('tiny'))
+morgan.token('body', (req) => {
+  if (req.method === 'POST') {
+    return JSON.stringify(req.body);
+  }
+  return '';
+});
+
+app.use(morgan(':method :url :status :response-time ms - :body'));
+
 
 app.use(express.json())
 
@@ -30,6 +38,7 @@ let persons = [
     }
 ]
 
+// Branie informacyjnej strony
 app.get('/info', (request, response) => {
   response.send(
     `<div>
@@ -38,9 +47,13 @@ app.get('/info', (request, response) => {
     </div>`
   )
 })
+
+// Branie listy
 app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
+
+// Branie osoby
 app.get('/api/persons/:id', (request, response) => {
     const id = request.params.id
     const person = persons.find(person => person.id === id)
@@ -50,12 +63,15 @@ app.get('/api/persons/:id', (request, response) => {
         response.status(404).json({Error: 'Person does not exist' }).end()
     }
 })
+
+//Usuwanie
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
     persons = persons.filter(person => person.id !== id)
     response.status(204).end()
 })
 
+// Dodawanie
 app.post('/api/persons', (request, response) => {
   const person = request.body
   const id = (Math.random() * 1000 + 5).toFixed(0);
