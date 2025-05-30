@@ -55,6 +55,23 @@ app.get('/persons/:id', (request, response) => {
     }
 })
 
+app.post('/persons', (request, response) => {
+  const person = request.body
+  const id = (Math.random() * 1000 + 5).toFixed(0);
+
+  const Id = persons.find(p => p.id === id);
+  const Name = persons.find(p => p.name === person.name);
+  const Number = persons.find(p => p.number === person.number);
+
+  if(Id){return response.status(400).json({ error: 'id must be unique' });}
+  if(Name){return response.status(400).json({ error: 'name must be unique' });}
+  if(Number){return response.status(400).json({ error: 'number must be unique' });}
+
+  const newPerson = {id: id, ...person};
+  persons.push(newPerson);
+  response.json(newPerson);
+})
+
 
 const PORT = 3001
 app.listen(PORT, () => {
