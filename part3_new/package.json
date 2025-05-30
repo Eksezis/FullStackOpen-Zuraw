@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "vite",
+    "dev": "node --watch index.js",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
