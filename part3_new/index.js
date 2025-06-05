@@ -2,7 +2,7 @@ import express from 'express'
 import http from 'http'
 import morgan from 'morgan'
 import cors from 'cors'
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 
 ////
