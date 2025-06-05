@@ -1,16 +1,9 @@
-import express from 'express'
-import http from 'http'
-import morgan from 'morgan'
-import cors from 'cors'
-import mongoose from 'mongoose'
-
-
-////
-const mongoose_url = 'mongodb+srv://Eksezis:<db_password>@cluster0.ak0xhj2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
-
-
-////
-
+const express =  require('express')
+const http =  require('http')
+const morgan =  require('morgan')
+const cors =  require('cors')
+const mongoose =  require('mongoose')
+////////////////////////////////////////////////
 const app = express()
 
 app.use(express.static('dist'));
@@ -24,27 +17,23 @@ morgan.token('body', (req) => {
   }
   return '';
 });
+////////////////////////////////////////////////
 
+const password = process.argv[2]
+const name = process.argv[3]
+const number = process.argv[4]
 
-let persons = [
-    { "id": "1","name": "Arto Hellas", "number": "040-123456"},
-    { "id": "2","name": "Ada Lovelace", "number": "39-44-5323523"},
-    { "id": "3","name": "Dan Abramov", "number": "12-43-234345"},
-    { "id": "4","name": "Mary Poppendieck", "number": "39-23-6423122"}
-]
+const url = `mongodb+srv://Eksezis:${password}@cluster0.ak0xhj2.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Cluster0`
+
+const Person = require('./models/person')
+Person.url = url;
+
+////////////////////////////////////////////////
 
 app.get('/persons', (request, response) => {
-    response.json(persons)
-})
-
-app.get('/persons/:id', (request, response) => {
-    const id = request.params.id
-    const person = persons.find(person => person.id === id)
-    if (person) {
-        response.json(person)
-    } else {
-        response.status(404).json({Error: 'Person does not exist' }).end()
-    }
+  Person.find({ important: true }).then(result => {
+    response.json(result)
+  })
 })
 
 app.post('/persons', (request, response) => {

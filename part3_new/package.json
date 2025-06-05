@@ -2,7 +2,7 @@
   "name": "part3",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
