@@ -1,8 +1,9 @@
-const express = require('express')
-const http = require('http')
-const morgan = require('morgan')
-const cors = require('cors')
+import express from 'express'
+import http from 'http'
+import morgan from 'morgan'
+import cors from 'cors'
 const mongoose = require('mongoose')
+
 
 ////
 const mongoose_url = 'mongodb+srv://Eksezis:<db_password>@cluster0.ak0xhj2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
