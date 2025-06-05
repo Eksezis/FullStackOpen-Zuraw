@@ -26,7 +26,6 @@ const number = process.argv[4]
 const url = `mongodb+srv://Eksezis:${password}@cluster0.ak0xhj2.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Cluster0`
 
 const Person = require('./models/person')
-Person.url = url;
 
 ////////////////////////////////////////////////
 
