@@ -22,6 +22,7 @@ morgan.token('body', (req) => {
 });
 ////////////////////////////////////////////////
 
+mongoose.connect(process.env.MONGODB_URI)
 
 ////////////////////////////////////////////////
 
@@ -32,21 +33,25 @@ app.get('/persons', (request, response) => {
 })
 
 app.post('/persons', (request, response) => {
-  const body = request.body
+  const Name = persons.find(p => p.name === person.name);
+  const Number = persons.find(p => p.number === person.number);
 
-  if (!body.name || !body.number) {
-      return response.status(400).json({ error: 'name or number missing' });
-    }
+  if(Name){return response.status(400).json({ error: 'name must be unique' });}
+  if(Number){return response.status(400).json({ error: 'number must be unique' });}
 
-  const newPerson = new Person({
-    name: body.name,
-    number: body.number,
+  const newPerson = {id: id, ...person};
+  persons.push(newPerson);
+  response.json(newPerson);
+
+  const person = new Person({
+    name: Name,
+    number: Number,
     important: true,
   })
   
   person.save().then(result => {
     console.log(`added ${name} number ${number} to phonebook`)
-    response.json(result)
+    mongoose.connection.close()
   })
 })
 
