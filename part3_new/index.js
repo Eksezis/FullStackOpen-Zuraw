@@ -50,15 +50,14 @@ app.post('/persons', (req, res) => {
 })
 
 app.delete('/persons/:id', (req, res) => {
-  const id = req.params.id
-  console.log('Request to delete person with id:', id)
-
-  Person.findByIdAndRemove(id)
+  console.log('DELETE request for id:', req.params.id)
+  Person.findByIdAndDelete(req.params.id)
     .then(result => {
-      console.log('Delete result:', result)
       if (result) {
+        console.log('Deleted:', result)
         res.status(204).end()
       } else {
+        console.log('Person not found')
         res.status(404).json({ error: 'Person not found' })
       }
     })

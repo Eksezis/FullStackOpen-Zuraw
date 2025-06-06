@@ -12,9 +12,13 @@ const submitPerson = (name, number) => {
 }
 
 const Delete = (id) => {
-  return axios.delete(baseUrl+`/${id}`)
+  console.log('Deleting person with ID:', id)
+  return axios.delete(`${baseUrl}/${id}`)
     .then(() => {console.log(`Person with ID ${id} deleted successfully.`);})
-    .catch(error => {console.error('Error deleting person:', error);alert('Failed to delete the person');});
+    .catch(error => {
+      console.error('Error deleting person:', error);
+      alert('Failed to delete the person');
+    });
 };
 
 export default { getPersonList, submitPerson, Delete}
