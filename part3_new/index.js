@@ -23,6 +23,16 @@ morgan.token('body', (req) => {
 ////////////////////////////////////////////////
 
 mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('Connected to MongoDB')
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`)
+    })
+  })
+  .catch(error => {
+    console.error('Error connecting to MongoDB:', error.message)
+  })
 
 ////////////////////////////////////////////////
 
@@ -33,27 +43,27 @@ app.get('/persons', (request, response) => {
 })
 
 app.post('/persons', (request, response) => {
-  const Name = persons.find(p => p.name === person.name);
-  const Number = persons.find(p => p.number === person.number);
+  const { name, number } = request.body;
 
-  if(Name){return response.status(400).json({ error: 'name must be unique' });}
-  if(Number){return response.status(400).json({ error: 'number must be unique' });}
-
-  const newPerson = {id: id, ...person};
-  persons.push(newPerson);
-  response.json(newPerson);
+  if (!name || !number) {
+    return response.status(400).json({ error: 'name and number are required' });
+  }
 
   const person = new Person({
-    name: Name,
-    number: Number,
+    name,
+    number,
     important: true,
-  })
-  
-  person.save().then(result => {
-    console.log(`added ${name} number ${number} to phonebook`)
-    mongoose.connection.close()
-  })
-})
+  });
+
+  person.save()
+    .then(result => {
+      response.status(201).json(result);
+    })
+    .catch(error => {
+      console.error(error);
+      response.status(500).json({ error: 'Failed to save person' });
+    });
+});
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
