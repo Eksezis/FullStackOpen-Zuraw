@@ -1,26 +1,21 @@
-const express =  require('express')
-const http =  require('http')
-const morgan =  require('morgan')
-const cors =  require('cors')
-const mongoose =  require('mongoose')
-
+const express = require('express')
+const morgan = require('morgan')
+const cors = require('cors')
+const mongoose = require('mongoose')
 const Person = require('./models/person')
 require('dotenv').config()
-////////////////////////////////////////////////
+
 const app = express()
 
-app.use(express.static('dist'));
-app.use(cors())
-app.use(morgan(':method :url :status :response-time ms - :body'));
-app.use(express.json())
+const PORT = process.env.PORT
 
-morgan.token('body', (req) => {
-  if (req.method === 'POST') {
-    return JSON.stringify(req.body);
-  }
-  return '';
-});
-////////////////////////////////////////////////
+app.use(express.static('dist'))
+app.use(cors())
+
+morgan.token('body', (req) => (req.method === 'POST' ? JSON.stringify(req.body) : ''))
+app.use(morgan(':method :url :status :response-time ms - :body'))
+
+app.use(express.json())
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
@@ -34,38 +29,41 @@ mongoose.connect(process.env.MONGODB_URI)
     console.error('Error connecting to MongoDB:', error.message)
   })
 
-////////////////////////////////////////////////
-
-app.get('/persons', (request, response) => {
-  Person.find({ important: true }).then(result => {
-    response.json(result)
-  })
+app.get('/persons', (req, res) => {
+  Person.find({ important: true })
+    .then(result => res.json(result))
 })
 
-app.post('/persons', (request, response) => {
-  const { name, number } = request.body;
-
+app.post('/persons', (req, res) => {
+  const { name, number } = req.body
   if (!name || !number) {
-    return response.status(400).json({ error: 'name and number are required' });
+    return res.status(400).json({ error: 'name and number are required' })
   }
 
-  const person = new Person({
-    name,
-    number,
-    important: true,
-  });
-
+  const person = new Person({ name, number, important: true })
   person.save()
+    .then(saved => res.status(201).json(saved))
+    .catch(error => {
+      console.error(error)
+      res.status(500).json({ error: 'Failed to save person' })
+    })
+})
+
+app.delete('/persons/:id', (req, res) => {
+  const id = req.params.id
+  console.log('Request to delete person with id:', id)
+
+  Person.findByIdAndRemove(id)
     .then(result => {
-      response.status(201).json(result);
+      console.log('Delete result:', result)
+      if (result) {
+        res.status(204).end()
+      } else {
+        res.status(404).json({ error: 'Person not found' })
+      }
     })
     .catch(error => {
-      console.error(error);
-      response.status(500).json({ error: 'Failed to save person' });
-    });
-});
-
-const PORT = process.env.PORT
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+      console.error('Delete error:', error)
+      res.status(400).json({ error: 'malformatted id' })
+    })
 })

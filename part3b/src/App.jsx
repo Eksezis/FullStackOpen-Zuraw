@@ -50,6 +50,17 @@ const App = () => {
           setTimeout(() => { setMessage(null) }, 5000)
       });
   }
+
+  const Delete = (id) => {
+    if (window.confirm('Are you sure you want to delete this entry?')) {
+      ServerLogic.Delete(id).then(() => {
+        setPersons(prevPersons => prevPersons.filter(person => person.id !== id));
+          setMessageStyle('green')
+          setMessage(`Person deleted succesfully`)
+          setTimeout(() => { setMessage(null) }, 5000)
+      });
+    }
+  }
   
 
   const Notification = ({ message, messageStyle }) => {
@@ -93,7 +104,7 @@ const App = () => {
         onNumberChange={NumberChange} 
         onSubmit={SubmitChange} 
       />
-      <PersonList filteredPersons={filteredPersons} />
+      <PersonList filteredPersons={filteredPersons} Delete={Delete} />
     </div>
   )
 }

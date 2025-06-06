@@ -11,4 +11,10 @@ const submitPerson = (name, number) => {
   return axios.post(baseUrl, person).then(response => response.data)
 }
 
-export default { getPersonList, submitPerson }
+const Delete = (id) => {
+  return axios.delete(baseUrl+`/${id}`)
+    .then(() => {console.log(`Person with ID ${id} deleted successfully.`);})
+    .catch(error => {console.error('Error deleting person:', error);alert('Failed to delete the person');});
+};
+
+export default { getPersonList, submitPerson, Delete}
