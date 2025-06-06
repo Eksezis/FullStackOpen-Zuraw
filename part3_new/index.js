@@ -32,18 +32,21 @@ app.get('/persons', (request, response) => {
 })
 
 app.post('/persons', (request, response) => {
-  const Name = persons.find(p => p.name === person.name);
-  const Number = persons.find(p => p.number === person.number);
+  const body = request.body
 
-  const person = new Person({
-    name: Name,
-    number: Number,
+  if (!body.name || !body.number) {
+      return response.status(400).json({ error: 'name or number missing' });
+    }
+
+  const newPerson = new Person({
+    name: body.name,
+    number: body.number,
     important: true,
   })
   
   person.save().then(result => {
-    console.log(`added ${Name} number ${Number} to phonebook`)
-    mongoose.connection.close()
+    console.log(`added ${name} number ${number} to phonebook`)
+    response.json(result)
   })
 })
 
