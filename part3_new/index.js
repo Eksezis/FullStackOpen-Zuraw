@@ -34,7 +34,7 @@ app.get('/persons', (req, res) => {
     .then(result => res.json(result))
 })
 
-app.post('/persons', (req, res) => {
+app.post('/persons', (req, res, next) => {
   const { name, number } = req.body
   if (!name || !number) {
     return res.status(400).json({ error: 'name and number are required' })
@@ -43,13 +43,10 @@ app.post('/persons', (req, res) => {
   const person = new Person({ name, number, important: true })
   person.save()
     .then(saved => res.status(201).json(saved))
-    .catch(error => {
-      console.error(error)
-      res.status(500).json({ error: 'Failed to save person' })
-    })
+    .catch(error => next(error))
 })
 
-app.delete('/persons/:id', (req, res) => {
+app.delete('/persons/:id', (req, res, next) => {
   console.log('DELETE request for id:', req.params.id)
   Person.findByIdAndDelete(req.params.id)
     .then(result => {
@@ -57,12 +54,22 @@ app.delete('/persons/:id', (req, res) => {
         console.log('Deleted:', result)
         res.status(204).end()
       } else {
-        console.log('Person not found')
-        res.status(404).json({ error: 'Person not found' })
+        const error = new Error('Person not found')
+        error.name = 'NotFound'
+        next(error)
       }
     })
-    .catch(error => {
-      console.error('Delete error:', error)
-      res.status(400).json({ error: 'malformatted id' })
-    })
+    .catch(error => next(error))
 })
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+app.use(errorHandler)
