@@ -34,6 +34,11 @@ app.get('/persons', (req, res) => {
     .then(result => res.json(result))
 })
 
+app.get('/persons/:id', (req, res) => {
+  Person.find({ important: true, id: req.params.id})
+    .then(result => res.json(result))
+})
+
 app.post('/persons', (req, res, next) => {
   const { name, number } = req.body
   if (!name || !number) {
