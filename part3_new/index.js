@@ -3,6 +3,9 @@ const http =  require('http')
 const morgan =  require('morgan')
 const cors =  require('cors')
 const mongoose =  require('mongoose')
+
+const Person = require('./models/person')
+require('dotenv').config()
 ////////////////////////////////////////////////
 const app = express()
 
@@ -19,13 +22,6 @@ morgan.token('body', (req) => {
 });
 ////////////////////////////////////////////////
 
-const password = process.argv[2]
-const name = process.argv[3]
-const number = process.argv[4]
-
-const url = `mongodb+srv://Eksezis:${password}@cluster0.ak0xhj2.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Cluster0`
-
-const Person = require('./models/person')
 
 ////////////////////////////////////////////////
 
@@ -52,8 +48,7 @@ app.post('/persons', (request, response) => {
   response.json(newPerson);
 })
 
-
-const PORT = 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
