@@ -17,6 +17,18 @@ app.use(morgan(':method :url :status :response-time ms - :body'))
 
 app.use(express.json())
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+
+
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB')
@@ -34,9 +46,10 @@ app.get('/persons', (req, res) => {
     .then(result => res.json(result))
 })
 
-app.get('/persons/:id', (req, res) => {
-  Person.find({ important: true, id: req.params.id})
+app.get('/persons/:id', (req, res, next) => {
+  Person.findById(req.params.id)
     .then(result => res.json(result))
+    .catch(error => next(error))
 })
 
 app.post('/persons', (req, res, next) => {
@@ -66,15 +79,4 @@ app.delete('/persons/:id', (req, res, next) => {
     })
     .catch(error => next(error))
 })
-
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
-
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  } 
-
-  next(error)
-}
-
 app.use(errorHandler)
