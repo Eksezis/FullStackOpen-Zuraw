@@ -21,4 +21,11 @@ const Delete = (id) => {
     });
 };
 
-export default { getPersonList, submitPerson, Delete}
+const updateNumber = (id, newNumber) => {
+    console.log(id);
+    return axios.put(`${baseUrl}/${id}`, {number: newNumber})
+      .then(response => {return response.data;})
+      .catch(error => {console.error('Error updating resource:', error);});
+  };
+
+  export default { getPersonList, submitPerson, Delete, updateNumber };

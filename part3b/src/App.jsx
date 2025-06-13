@@ -29,6 +29,7 @@ const App = () => {
         setMessageStyle('red')
         setMessage(`${newName} is already added to phonebook`)
         setTimeout(() => { setMessage(null) }, 5000)
+        updateNumber(newName, newNumber);
       return
     }
     if (persons.some(person => person.number === newNumber)) {
@@ -61,6 +62,20 @@ const App = () => {
       });
     }
   }
+  
+  const updateNumber = (newName, newNumber) => {
+      if (persons.some(person => person.name === newName)) {
+        if(window.confirm(`Replace the number?`)){
+          const person = persons.find(p => p.name === newName)
+          ServerLogic.updateNumber(person.id, newNumber).then((updated) => {
+            setPersons(persons.map(p => p.id !== updated.id ? p : updated))
+              setMessageStyle('green')
+              setMessage(`${newName}'s number changed successfully`)
+              setTimeout(() => { setMessage(null) }, 5000)
+          })
+        }
+      }
+    }
   
 
   const Notification = ({ message, messageStyle }) => {

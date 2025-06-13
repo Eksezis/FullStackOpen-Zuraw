@@ -52,6 +52,23 @@ app.get('/persons/:id', (req, res, next) => {
     .catch(error => next(error))
 })
 
+app.put('/persons/:id', (req, res, next) => {
+  const { number } = req.body;
+  Person.findByIdAndUpdate(
+    req.params.id,
+    { number },
+    { new: true, runValidators: true, context: 'query' }
+  )
+  .then(updatedPerson => {
+    if(updatedPerson) {
+      res.json(updatedPerson);
+    } else {
+      res.status(404).json({ error: 'Person not found' });
+    }
+  })
+  .catch(error => next(error))
+});
+
 app.post('/persons', (req, res, next) => {
   const { name, number } = req.body
   if (!name || !number) {
